@@ -7,7 +7,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 def get_page_source(page_url, scroll=False):
     options = EdgeOptions()
     options.add_argument("--window-size=1920,1080")
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
 
     driver = webdriver.Edge(options=options, service=EdgeService(EdgeChromiumDriverManager().install()))
 

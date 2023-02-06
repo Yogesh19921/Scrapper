@@ -62,8 +62,8 @@ def get_search(category, curr_url):
         print(f'category not found for {curr_url}')
         search = "NA"
     else:
-        temp = category.split("by ")[0]
-        temp = category.split("in ")[-1]
+        category = category.split("by ")[0]
+        category = category.split("in ")[-1]
         search = 'https://amazon.com/s?k=' + category.replace(' ', '+')
 
     return search
