@@ -33,8 +33,9 @@ def save_data(products):
 def program():
     subject_hrefs = []
 
-    for page_url in page_URLs:
-        subject_hrefs.extend(fetch_product_urls(page_url))
+    with ThreadPoolExecutor() as executor:
+        for href in executor.map(fetch_product_urls, page_URLs):
+            subject_hrefs.extend(href)
 
     print(len(subject_hrefs))
     products = []
