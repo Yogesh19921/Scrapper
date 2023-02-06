@@ -13,16 +13,16 @@ def get_name(soup2):
 
 def get_category(soup2, bsr_category):
     category = None
-    if soup2.find("span", {"class", "cat-link"}) is not None:
-        category = soup2.find("span", {"class", "cat-link"}).text.strip()
+    if bsr_category is None:
+        if soup2.find("span", {"class", "cat-link"}) is not None:
+            category = soup2.find("span", {"class", "cat-link"}).text.strip()
 
-    if soup2.find("span", {"class": "ac-keyword-link"}) is not None:
-        category = soup2.find("span", {"class": "ac-keyword-link"}).text.strip()
+        if soup2.find("span", {"class": "ac-keyword-link"}) is not None:
+            category = soup2.find("span", {"class": "ac-keyword-link"}).text.strip()
 
-    if soup2.find("span", {"class": "ac-for-text"}) is not None:
-        category = soup2.find("span", {"class": "ac-for-text"}).text.strip()
-
-    if category is None:
+        if soup2.find("span", {"class": "ac-for-text"}) is not None:
+            category = soup2.find("span", {"class": "ac-for-text"}).text.strip()
+    else:
         category = bsr_category
 
     return category
@@ -67,7 +67,7 @@ def get_search(category, curr_url):
     else:
         category = category.split("by ")[0]
         category = category.split("in ")[-1]
-        search = 'https://amazon.com/s?k=' + category.replace(' ', '+')
+        search = 'https://amazon.com/s?k=' + category.replace(' ', '+') + "&rh=p_36%3A1600-15000"
 
     return search
 
@@ -93,7 +93,12 @@ def crawl_item(href):
     soup1 = BeautifulSoup(page, "html.parser")
     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
     BSR = get_best_sellers_rank(soup2)
-    bsr_category = BSR.split("\n")[-1].split(" in ")[-1]
+    bsr_category = None
+    try:
+        bsr_category = BSR.split("\n")[-1].split(" in ")[-1]
+    except:
+        print(f"couldn't find category here for {curr_url} with BSR: {BSR}")
+
     category = get_category(soup2, bsr_category)
 
     product = {
@@ -109,8 +114,3 @@ def crawl_item(href):
     }
 
     return product
-
-# Smaller description and larger description of the group.
-# E.g. - Description of the product in the group. Include:
-# - dimensions
-# -

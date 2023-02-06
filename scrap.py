@@ -21,28 +21,48 @@ def fetch_product_urls(page_url):
 
 
 def save_data(products):
+    columns = ['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search', 'url']
     with open('prod.csv', 'w', newline='') as f:
-        writer = csv.DictWriter(f,
-                                fieldnames=['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search',
-                                            'url'])
-        # writer = csv.DictWriter(f, fieldnames=['search', 'url'])
+        writer = csv.DictWriter(f, fieldnames=columns)
         for p in products:
             writer.writerow(p)
 
 
-def program():
+def get_product_page_hrefs():
     subject_hrefs = []
+    futures = []
 
-    with ThreadPoolExecutor() as executor:
-        for href in executor.map(fetch_product_urls, page_URLs):
-            subject_hrefs.extend(href)
+    executor = ThreadPoolExecutor()
 
-    print(len(subject_hrefs))
+    for page_url in page_URLs:
+        futures.append(executor.submit(fetch_product_urls, page_url))
+
+    for future in futures:
+        res = future.result()
+        subject_hrefs.extend(res)
+
+    return subject_hrefs
+
+
+def get_product_details(subject_hrefs):
     products = []
+    futures = []
 
-    with ThreadPoolExecutor() as executor:
-        for product in executor.map(crawl_item, subject_hrefs):
-            products.append(product)
+    executor = ThreadPoolExecutor()
+
+    for href in subject_hrefs:
+        futures.append(executor.submit(crawl_item, href))
+
+    for future in futures:
+        res = future.result()
+        products.append(res)
+
+    return products
+
+
+def program():
+    subject_hrefs = get_product_page_hrefs()
+    products = get_product_details(subject_hrefs)
 
     save_data(products)
 
