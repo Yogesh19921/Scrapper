@@ -1,5 +1,6 @@
 # Import files
 from Utils import get_page_source
+from Filters import add_filters
 
 # Import libraries
 from bs4 import BeautifulSoup
@@ -67,7 +68,9 @@ def get_search(category, curr_url):
     else:
         category = category.split("by ")[0]
         category = category.split("in ")[-1]
-        search = 'https://amazon.com/s?k=' + category.replace(' ', '+') + "&rh=p_36%3A1600-15000"
+        search = 'https://amazon.com/s?k=' + category.replace(' ', '+')
+
+    search = add_filters(search)
 
     return search
 
