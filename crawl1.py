@@ -11,7 +11,7 @@ def get_name(soup2):
     return name
 
 
-def get_category(soup2):
+def get_category(soup2, bsr_category):
     category = None
     if soup2.find("span", {"class", "cat-link"}) is not None:
         category = soup2.find("span", {"class", "cat-link"}).text.strip()
@@ -21,6 +21,9 @@ def get_category(soup2):
 
     if soup2.find("span", {"class": "ac-for-text"}) is not None:
         category = soup2.find("span", {"class": "ac-for-text"}).text.strip()
+
+    if category is None:
+        category = bsr_category
 
     return category
 
@@ -89,7 +92,9 @@ def crawl_item(href):
     page = get_page_source(curr_url)
     soup1 = BeautifulSoup(page, "html.parser")
     soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
-    category = get_category(soup2)
+    BSR = get_best_sellers_rank(soup2)
+    bsr_category = BSR.split("\n")[-1].split(" in ")[-1]
+    category = get_category(soup2, bsr_category)
 
     product = {
         'name': get_name(soup2),
@@ -100,7 +105,7 @@ def crawl_item(href):
         'rating': get_rating(soup2),
         'search': get_search(category, curr_url),
         'url': curr_url,
-        'BSR': get_best_sellers_rank(soup2)
+        'BSR': BSR
     }
 
     return product
