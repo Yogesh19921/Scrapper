@@ -1,56 +1,46 @@
+# Import Files
+from crawl1 import crawl_item
+from Utils import get_page_source
+
+# Import libraries
 from bs4 import BeautifulSoup
-from crawl1 import crawlItem
 import csv
 from concurrent.futures import ThreadPoolExecutor
-# selenium 4
-from selenium import webdriver
-from selenium.webdriver.edge.service import Service as EdgeService
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
-from selenium.webdriver.edge.options import Options as EdgeOptions
 
-options = EdgeOptions()
-options.headless = True
-options.add_argument("--window-size=1920,1080")
-driver = webdriver.Edge(options=options, service=EdgeService(EdgeChromiumDriverManager().install()))
+page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden",
+             "https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
 
-#driver.get('https://www.amazon.com/Best-Sellers-Home-Art-Supplies/zgbs/kitchen')
-driver.get('https://www.amazon.com/gp/new-releases/home-garden')
-total_height = int(driver.execute_script("return document.body.scrollHeight"))
-for i in range(1, total_height, 10):
-    driver.execute_script("window.scrollTo(0, {});".format(i))
 
-content = driver.page_source
+def fetch_product_urls(page_url):
+    content = get_page_source(page_url)
 
-driver.quit()
+    soup1 = BeautifulSoup(content, "html.parser")
+    subject_urls = soup1.find_all("a", {"class": "a-link-normal", "tabindex": "-1", "role": "link"})
 
-soup1 = BeautifulSoup(content, "html.parser")
-soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
-subject_urls = soup1.find_all("a", {"class": "a-link-normal", "tabindex": "-1", "role": "link"})
+    return subject_urls
 
-print(len(subject_urls))
-urls = set()
-products = []
-count = 0
 
-"""
-for item in subject_urls:
-    if (count == 1):
-        break
-    #curr_url = "https://amazon.ca" + item.attrs['href']
-    #urls.add(curr_url)
-    product = crawlItem(item)
-    products.append(product)
-    count = count + 1
-"""
+def program():
+    subject_hrefs = []
 
-with ThreadPoolExecutor() as executor:
-    for product in executor.map(crawlItem, subject_urls):
-        products.append(product)
+    for page_url in page_URLs:
+        subject_hrefs.extend(fetch_product_urls(page_url))
 
-    print("waiting ...")
+    print(len(subject_hrefs))
+    products = []
 
-with open('prod.csv', 'w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search', 'url'])
-    #writer = csv.DictWriter(f, fieldnames=['search', 'url'])
-    for p in products:
-        writer.writerow(p)
+    with ThreadPoolExecutor() as executor:
+        for product in executor.map(crawl_item, subject_hrefs[:5]):
+            products.append(product)
+
+    with open('prod.csv', 'w', newline='') as f:
+        writer = csv.DictWriter(f,
+                                fieldnames=['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search',
+                                            'url'])
+        # writer = csv.DictWriter(f, fieldnames=['search', 'url'])
+        for p in products:
+            writer.writerow(p)
+
+
+if __name__ == "__main__":
+    program()
