@@ -12,12 +12,22 @@ page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden",
 
 
 def fetch_product_urls(page_url):
-    content = get_page_source(page_url)
+    content = get_page_source(page_url=page_url, scroll=True)
 
     soup1 = BeautifulSoup(content, "html.parser")
     subject_urls = soup1.find_all("a", {"class": "a-link-normal", "tabindex": "-1", "role": "link"})
 
     return subject_urls
+
+
+def save_data(products):
+    with open('prod.csv', 'w', newline='') as f:
+        writer = csv.DictWriter(f,
+                                fieldnames=['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search',
+                                            'url'])
+        # writer = csv.DictWriter(f, fieldnames=['search', 'url'])
+        for p in products:
+            writer.writerow(p)
 
 
 def program():
@@ -30,16 +40,10 @@ def program():
     products = []
 
     with ThreadPoolExecutor() as executor:
-        for product in executor.map(crawl_item, subject_hrefs[:5]):
+        for product in executor.map(crawl_item, subject_hrefs):
             products.append(product)
 
-    with open('prod.csv', 'w', newline='') as f:
-        writer = csv.DictWriter(f,
-                                fieldnames=['name', 'category', 'price', 'ASIN', 'BSR', 'reviews', 'rating', 'search',
-                                            'url'])
-        # writer = csv.DictWriter(f, fieldnames=['search', 'url'])
-        for p in products:
-            writer.writerow(p)
+    save_data(products)
 
 
 if __name__ == "__main__":
