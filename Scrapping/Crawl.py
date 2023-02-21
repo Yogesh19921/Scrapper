@@ -1,6 +1,6 @@
 # Import files
-from Utils import get_page_source
-from Filters import add_filters
+from Utilities.Utils import get_page_source
+from Scrapping.Filters import add_filters
 
 # Import libraries
 from bs4 import BeautifulSoup
@@ -14,6 +14,15 @@ def get_name(soup2):
 
 def get_category(soup2, bsr_category):
     category = None
+
+    # Try to find category from Amazon tree
+    if soup2.find("ul", {"class", "a-unordered-list a-horizontal a-size-small"}) is not None:
+        category = soup2.find("ul", {"class", "a-unordered-list a-horizontal a-size-small"}).findChildren("li")[-1].text.strip()
+
+    if category is not None:
+        return category
+
+    # Category tree is not present.
     if bsr_category is None:
         if soup2.find("span", {"class", "cat-link"}) is not None:
             category = soup2.find("span", {"class", "cat-link"}).text.strip()

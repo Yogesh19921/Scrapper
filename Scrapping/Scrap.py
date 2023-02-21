@@ -1,14 +1,14 @@
 # Import Files
-from crawl1 import crawl_item
-from Utils import get_page_source
+from Scrapping.Crawl import crawl_item
+from Utilities.Utils import get_page_source
 
 # Import libraries
 from bs4 import BeautifulSoup
 import csv
 from concurrent.futures import ThreadPoolExecutor
 
-page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden",
-             "https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
+page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden"]
+             #"https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
 
 
 def fetch_product_urls(page_url):
@@ -62,10 +62,6 @@ def get_product_details(subject_hrefs):
 
 def program():
     subject_hrefs = get_product_page_hrefs()
-    products = get_product_details(subject_hrefs)
+    products = get_product_details(subject_hrefs[:2])
 
     save_data(products)
-
-
-if __name__ == "__main__":
-    program()
