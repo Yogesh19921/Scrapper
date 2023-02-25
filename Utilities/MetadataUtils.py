@@ -37,23 +37,37 @@ def get_category(soup2):
     return category
 
 
-def get_asin(curr_url):
-    ASIN = re.search(r'/[dg]p/([^/]+)', curr_url, flags=re.IGNORECASE).group(1)
+def get_asin(soup2):
+    ASIN = None
+    rows = soup2.find_all('tr')
+
+    for row in rows:
+        if 'ASIN' in row.text:
+            ASIN = row.text.strip().split("\n")[-1].strip()
+            break
+
     return ASIN
 
 
 def get_price(soup2):
-    if soup2.find("span", {"class": "a-offscreen"}) is not None:
-        price = soup2.find("span", {"class": "a-offscreen"}).text.strip()
-    else:
-        price = "NA"
+    price = None
 
+    if soup2.find("span", {"class": "a-price-whole"}) is not None:
+        price = soup2.find("span", {"class": "a-price-whole"}).text.strip()
+
+        if soup2.find("span", {"class": "a-price-decimal"}) is not None:
+            if soup2.find("span", {"class": "a-price-fraction"}) is not None:
+                price = price + soup2.find("span", {"class": "a-price-fraction"}).text.strip()
+
+        price = re.sub(" +", "", price)
+        price = re.sub("\n", "", price)
     return price
 
 
 def get_reviews(soup2):
     if soup2.find("span", {"id": "acrCustomerReviewText"}) is not None:
         reviews = soup2.find("span", {"id": "acrCustomerReviewText"}).text.strip()
+        reviews = reviews.split(" ")[0]
     else:
         reviews = "NA"
 
@@ -63,6 +77,7 @@ def get_reviews(soup2):
 def get_rating(soup2):
     if soup2.find("span", {"data-hook": "rating-out-of-text"}) is not None:
         rating = soup2.find("span", {"data-hook": "rating-out-of-text"}).text.strip()
+        rating = rating.split(" ")[0]
     else:
         rating = "NA"
 
@@ -107,6 +122,7 @@ def get_bsr_category(soup2):
 
     return bsr_category
 
+
 def get_product_dimensions(soup2):
     dimensions = None
     rows = soup2.find_all('tr')
@@ -114,8 +130,6 @@ def get_product_dimensions(soup2):
     for row in rows:
         if 'Dimensions' in row.text:
             dimensions = row.text.strip().split("\n")[-1].strip()
-            #print(dimensions)
             break
 
     return dimensions
-
