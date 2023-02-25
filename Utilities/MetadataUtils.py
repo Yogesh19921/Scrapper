@@ -70,7 +70,7 @@ def get_price(soup2):
         price = re.sub(" +", "", price)
         price = re.sub("\n", "", price)
 
-    validate_and_throw_exception(category, "category")
+    validate_and_throw_exception(price, "price")
     return price
 
 
