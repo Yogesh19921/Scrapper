@@ -3,8 +3,14 @@ from Scrapping.Filters import add_filters
 import re
 
 
+def validate_and_throw_exception(attribute, name):
+    if attribute is None:
+        raise Exception("attribute is None: " + str(name))
+
+
 def get_name(soup2):
     name = soup2.find("span", {"id": "productTitle"}).text.strip()
+    validate_and_throw_exception(name, "name")
     return name
 
 
@@ -34,6 +40,7 @@ def get_category(soup2):
     else:
         category = bsr_category
 
+    validate_and_throw_exception(category, "category")
     return category
 
 
@@ -46,6 +53,7 @@ def get_asin(soup2):
             ASIN = row.text.strip().split("\n")[-1].strip()
             break
 
+    validate_and_throw_exception(ASIN, "ASIN")
     return ASIN
 
 
@@ -61,6 +69,8 @@ def get_price(soup2):
 
         price = re.sub(" +", "", price)
         price = re.sub("\n", "", price)
+
+    validate_and_throw_exception(category, "category")
     return price
 
 
@@ -71,6 +81,7 @@ def get_reviews(soup2):
     else:
         reviews = "NA"
 
+    validate_and_throw_exception(reviews, "reviews")
     return reviews
 
 
@@ -81,6 +92,7 @@ def get_rating(soup2):
     else:
         rating = "NA"
 
+    validate_and_throw_exception(rating, "rating")
     return rating
 
 
@@ -95,6 +107,7 @@ def get_search(category, curr_url):
 
     search = add_filters(search)
 
+    validate_and_throw_exception(search, "search")
     return search
 
 
@@ -110,6 +123,7 @@ def get_best_sellers_rank(soup2):
             best_seller_rank = best_seller_rank.replace("#", "\n")
             break
 
+    validate_and_throw_exception(best_seller_rank, "best_seller_rank")
     return best_seller_rank
 
 
@@ -120,6 +134,7 @@ def get_bsr_category(soup2):
     except:
         print(f"couldn't find category here for {get_name(soup2)}")
 
+    validate_and_throw_exception(bsr_category, "bsr_category")
     return bsr_category
 
 
@@ -132,4 +147,5 @@ def get_product_dimensions(soup2):
             dimensions = row.text.strip().split("\n")[-1].strip()
             break
 
+    validate_and_throw_exception(dimensions, "dimensions")
     return dimensions

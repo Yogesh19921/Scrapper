@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 import csv
 from concurrent.futures import ThreadPoolExecutor
 
-page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden"]
-             #"https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
+page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden",
+             "https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
 
 
 def fetch_product_urls(page_url):
@@ -55,7 +55,8 @@ def get_product_details(subject_hrefs):
 
     for future in futures:
         res = future.result()
-        products.append(res)
+        if res is not None:
+            products.append(res)
 
     return products
 
@@ -65,3 +66,4 @@ def program():
     products = get_product_details(subject_hrefs[:2])
 
     save_data(products)
+    return products
