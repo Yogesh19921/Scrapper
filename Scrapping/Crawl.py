@@ -14,8 +14,8 @@ def crawl_item(href):
         page = get_page_source(curr_url)
         soup1 = BeautifulSoup(page, "html.parser")
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
-        BSR = get_best_sellers_rank(soup2)
-        bsr_category = get_bsr_category(soup2)
+        BSR = get_best_sellers_rank(page)
+        bsr_category = get_bsr_category(page)
 
         category = get_category(soup2)
 
@@ -23,7 +23,7 @@ def crawl_item(href):
             'name': get_name(soup2),
             'category': category,
             'price': get_price(soup2),
-            'ASIN': get_asin(soup2),
+            'ASIN': get_asin(page),
             'reviews': get_reviews(soup2),
             'rating': get_rating(soup2),
             'search': get_search(category, curr_url),

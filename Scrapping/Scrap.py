@@ -1,14 +1,26 @@
 # Import Files
 from Scrapping.Crawl import crawl_item
 from Utilities.Utils import get_page_source
+from Utilities.ServiceBusUtils import send_message
 
 # Import libraries
 from bs4 import BeautifulSoup
 import csv
 from concurrent.futures import ThreadPoolExecutor
 
-page_URLs = ["https://www.amazon.com/gp/new-releases/home-garden",
-             "https://www.amazon.com/gp/new-releases/home-garden/ref=zg_bsnr_pg_2?ie=UTF8&pg=2"]
+page_URLs = ["https://www.amazon.com/Best-Sellers-Arts-Crafts-Sewing/zgbs/arts-crafts/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Automotive/zgbs/automotive/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Baby/zgbs/baby-products/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Home-Kitchen/zgbs/home-garden/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Industrial-Scientific/zgbs/industrial/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Kitchen-Dining/zgbs/kitchen/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Musical-Instruments/zgbs/musical-instruments/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Office-Products/zgbs/office-products/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Patio-Lawn-Garden/zgbs/lawn-garden/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Pet-Supplies/zgbs/pet-supplies/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Sports-Outdoors/zgbs/sporting-goods/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Tools-Home-Improvement/zgbs/hi/ref=zg_bs_nav_0",
+             "https://www.amazon.com/Best-Sellers-Toys-Games/zgbs/toys-and-games/ref=zg_bs_nav_0"]
 
 
 def fetch_product_urls(page_url):
@@ -56,6 +68,7 @@ def get_product_details(subject_hrefs):
     for future in futures:
         res = future.result()
         if res is not None:
+            send_message(res)
             products.append(res)
 
     return products
@@ -63,7 +76,7 @@ def get_product_details(subject_hrefs):
 
 def program():
     subject_hrefs = get_product_page_hrefs()
-    products = get_product_details(subject_hrefs[:2])
+    products = get_product_details(subject_hrefs)
 
     save_data(products)
     return products

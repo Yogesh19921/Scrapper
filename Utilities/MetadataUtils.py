@@ -44,14 +44,13 @@ def get_category(soup2):
     return category
 
 
-def get_asin(soup2):
+def get_asin(page):
     ASIN = None
-    rows = soup2.find_all('tr')
+    pattern = r'>\s*[A-Z][A-Z0-9]{9}\s*<'
+    matches = re.findall(pattern, page)
 
-    for row in rows:
-        if 'ASIN' in row.text:
-            ASIN = row.text.strip().split("\n")[-1].strip()
-            break
+    if len(matches) > 0:
+        ASIN = matches[0].replace("<", "").replace(">", "").strip()
 
     validate_and_throw_exception(ASIN, "ASIN")
     return ASIN
@@ -111,28 +110,26 @@ def get_search(category, curr_url):
     return search
 
 
-def get_best_sellers_rank(soup2):
-    rows = soup2.find_all('tr')
+def get_best_sellers_rank(page):
+    #rows = soup2.find_all('tr')
     best_seller_rank = None
 
-    for row in rows:
-        if 'Best Sellers Rank' in row.text:
-            best_seller_rank = row.text.replace("\n", "").strip()
-            best_seller_rank = best_seller_rank.split("Best Sellers Rank")[-1]
-            best_seller_rank = re.sub(" +", " ", best_seller_rank)
-            best_seller_rank = best_seller_rank.replace("#", "\n")
-            break
+    pattern = r'#\d{1,2}\s+in\s+\.*?<?.*?<'
+    matches = re.findall(pattern, page)
+
+    if len(matches) > 0:
+        best_seller_rank = matches[0].replace('<', '').replace('>', '')
 
     validate_and_throw_exception(best_seller_rank, "best_seller_rank")
     return best_seller_rank
 
 
-def get_bsr_category(soup2):
+def get_bsr_category(page):
     bsr_category = None
     try:
-        bsr_category = get_best_sellers_rank(soup2).split("\n")[-1].split(" in ")[-1]
+        bsr_category = get_best_sellers_rank(page).split("in")[1]
     except:
-        print(f"couldn't find category here for {get_name(soup2)}")
+        print(f"couldn't find category here for {page}")
 
     validate_and_throw_exception(bsr_category, "bsr_category")
     return bsr_category
