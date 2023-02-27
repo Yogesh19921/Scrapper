@@ -1,5 +1,7 @@
+from Utilities.CosmosUtils import insert_entry
 from Utilities.Utils import get_page_source
 from Utilities.MetadataUtils import *
+from Utilities.ServiceBusUtils import get_message
 
 # Import libraries
 from bs4 import BeautifulSoup
@@ -7,42 +9,18 @@ from concurrent.futures import ThreadPoolExecutor
 import logging as logger
 import time
 
-from azure.cosmos import CosmosClient, PartitionKey
-from azure.identity import DefaultAzureCredential
 
-ENDPOINT = "https://scraping-grouping.documents.azure.com:443/"
-DATABASE_NAME = "Scraping"
-CONTAINER_NAME = "Groups"
-key_path = PartitionKey(path="/ASIN")
+def create_group():
+    while True:
+        candidate_urls = get_candidate_urls()
+        # print(candidate_urls[:1])
+        candidates_metadata = get_candidates_metadata(candidate_urls)
 
-
-def get_container():
-    credential = DefaultAzureCredential()
-    client = CosmosClient(url=ENDPOINT, credential=credential)
-    database = client.create_database_if_not_exists(id=DATABASE_NAME)
-    c = database.create_container_if_not_exists(
-        id=CONTAINER_NAME, partition_key=key_path, offer_throughput=400
-    )
-    return c
-
-
-container = get_container()
-
-
-def insert_entry(metadata):
-    container.create_item(metadata)
-
-
-def create_group(search_url):
-    candidate_urls = get_candidate_urls(search_url)
-    # print(candidate_urls[:1])
-    candidates_metadata = get_candidates_metadata(candidate_urls)
-
-    print("============================================")
-    print(candidates_metadata)
-    print("Scraped URLs:" + str(len(candidates_metadata)))
-    print("Total Urls: " + str(len(candidate_urls)))
-    print("============================================")
+        print("============================================")
+        print(candidates_metadata)
+        print("Scraped URLs:" + str(len(candidates_metadata)))
+        print("Total Urls: " + str(len(candidate_urls)))
+        print("============================================")
 
 
 def get_candidates_metadata(urls):
@@ -93,7 +71,8 @@ def get_candidate_metadata(url):
     return metadata
 
 
-def get_candidate_urls(search_url):
+def get_candidate_urls():
+    search_url = get_message()[0]['search']
     page = get_page_source(search_url)
     soup1 = BeautifulSoup(page, "html.parser")
 
