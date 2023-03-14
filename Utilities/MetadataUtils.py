@@ -44,13 +44,13 @@ def get_category(soup2):
     return category
 
 
-def get_asin(page):
+def get_asin(url):
     ASIN = None
-    pattern = r'>\s*[A-Z][A-Z0-9]{9}\s*<'
-    matches = re.findall(pattern, page)
+    pattern = r'/[A-Z][A-Z0-9]{9}/'
+    matches = re.findall(pattern, url)
 
     if len(matches) > 0:
-        ASIN = matches[0].replace("<", "").replace(">", "").strip()
+        ASIN = matches[0].replace("/", "")
 
     validate_and_throw_exception(ASIN, "ASIN")
     return ASIN
@@ -111,7 +111,6 @@ def get_search(category, curr_url):
 
 
 def get_best_sellers_rank(page):
-    #rows = soup2.find_all('tr')
     best_seller_rank = None
 
     pattern = r'#\d{1,2}\s+in\s+\.*?<?.*?<'
@@ -128,8 +127,8 @@ def get_bsr_category(page):
     bsr_category = None
     try:
         bsr_category = get_best_sellers_rank(page).split("in")[1]
-    except:
-        print(f"couldn't find category here for {page}")
+    except Exception as e:
+        print(f"couldn't find category")
 
     validate_and_throw_exception(bsr_category, "bsr_category")
     return bsr_category
@@ -144,5 +143,11 @@ def get_product_dimensions(soup2):
             dimensions = row.text.strip().split("\n")[-1].strip()
             break
 
+    if dimensions is None:
+        rows = soup2.find_all('li')
+        for row in rows:
+            if 'Dimensions' in row.text:
+                dimensions = row.text.strip().split("\n")[-1].strip()
+                break;
     validate_and_throw_exception(dimensions, "dimensions")
     return dimensions

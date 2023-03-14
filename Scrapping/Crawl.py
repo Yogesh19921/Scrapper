@@ -15,15 +15,15 @@ def crawl_item(href):
         soup1 = BeautifulSoup(page, "html.parser")
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
         BSR = get_best_sellers_rank(page)
-        bsr_category = get_bsr_category(page)
 
         category = get_category(soup2)
+        bsr_category = category
 
         product = {
             'name': get_name(soup2),
             'category': category,
             'price': get_price(soup2),
-            'ASIN': get_asin(page),
+            'ASIN': get_asin(curr_url),
             'reviews': get_reviews(soup2),
             'rating': get_rating(soup2),
             'search': get_search(category, curr_url),
@@ -33,8 +33,7 @@ def crawl_item(href):
 
         return product
     except Exception as e:
-        logger.error("Error occured: " + str(e))
+        logger.error("Error occurred: " + str(e))
         logger.error("URL:" + str(href.attrs['href']))
         time.sleep(5)
         return None
-

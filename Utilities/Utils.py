@@ -4,9 +4,44 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service as EdgeService
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from selenium.webdriver.common.by import By
 import random
+from amazoncaptcha import AmazonCaptcha
+import time
+import re
+from threading import Lock
+
+lock = Lock()
 
 PROXY = "socks5://localhost:9050"
+VALIDATE_TEXT = "Sorry, we just need to make sure you're not a robot. For best results, please make sure your browser is accepting cookies."
+
+CAPTCHAS_SOLVED = 0
+CAPTCHAS_SOLVED_LIMIT = 10
+
+
+def limit_captcha_solving():
+    lock.acquire()
+    CAPTCHAS_SOLVED = CAPTCHAS_SOLVED + 1
+    if CAPTCHAS_SOLVED >= CAPTCHAS_SOLVED_LIMIT:
+        print("Too many captchas solved. Time to sleep")
+        time.sleep(30)
+        CAPTCHAS_SOLVED = 0
+
+    lock.release()
+
+
+def solve_captcha(driver):
+    print("==============================Solving captcha======================================")
+    img_src = driver.find_element(By.TAG_NAME, "img").get_attribute("src")
+    captcha = AmazonCaptcha.fromlink(img_src)
+    print("capthca image - " + str(img_src))
+    solution = captcha.solve()
+    print("Solution - " + str(solution))
+    driver.find_element(By.ID, "captchacharacters").send_keys(str(solution))
+    driver.find_element(By.TAG_NAME, "button").click()
+
+    return driver.page_source
 
 
 def get_options():
@@ -21,10 +56,6 @@ def get_options():
 
 
 def get_page_source(page_url, scroll=False):
-    # randomize scrolling, so amazon doesn't get suspicious
-    if not scroll:
-        scroll = random.choice([True, False])
-
     driver = webdriver.Edge(options=get_options(), service=EdgeService(EdgeChromiumDriverManager().install()))
     driver.get(page_url)
     if scroll:
@@ -36,5 +67,11 @@ def get_page_source(page_url, scroll=False):
             total_height = int(driver.execute_script("return document.body.scrollHeight"))
 
     content = driver.page_source
+
+    if re.search(VALIDATE_TEXT, content, re.IGNORECASE):
+        content = solve_captcha(driver)
+        print("Solved captcha for : ============" + str(page_url))
+        limit_captcha_solving()
+
     driver.quit()
     return content
