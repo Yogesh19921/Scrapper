@@ -2,11 +2,11 @@ from Utilities.Utils import get_page_source
 from Utilities.MetadataUtils import *
 from Utilities.ServiceBusUtils import *
 from Utilities.CosmosUtils import *
-from AmazonRateLimiterException import AmazonRateLimiterException
+from ScrapingProducts.AmazonRateLimiterException import AmazonRateLimiterException
 
 # Import libraries
 from bs4 import BeautifulSoup
-from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
 import logging as logger
 import time
 import json
@@ -15,17 +15,12 @@ AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try a
 
 
 def program():
-    futures = []
-    executor = ThreadPoolExecutor()
-
-    for i in range(10):
-        futures.append(executor.submit(run_a_thread()))
-
-    for future in futures:
-        res = future.result()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        executor.map(run_a_thread, range(10))
 
 
-def run_a_thread():
+def run_a_thread(thread_id):
+    print("starting thread: " + str(thread_id))
     while True:
         try:
             retrieve_url_scrap_and_insert_into_db()
