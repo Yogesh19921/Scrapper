@@ -9,7 +9,6 @@ import random
 from amazoncaptcha import AmazonCaptcha
 import re
 
-
 PROXY = "socks5://localhost:9050"
 VALIDATE_TEXT = "Sorry, we just need to make sure you're not a robot. For best results, please make sure your browser is accepting cookies."
 

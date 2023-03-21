@@ -1,4 +1,4 @@
-from Scrapping.Scrap import program
+from CollectingProducts.Collect import program
 
 if __name__ == "__main__":
     products = program()

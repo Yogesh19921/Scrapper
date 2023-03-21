@@ -2,8 +2,8 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = "scrap-url-list.servicebus.windows.net"
-TOPIC_NAME = "urls"
-SUBSCRIPTION_NAME = "get-url-subscription"
+TOPIC_NAME = "items"
+SUBSCRIPTION_NAME = "url-list-subscription"
 
 credential = DefaultAzureCredential()
 servicebus_client = ServiceBusClient(

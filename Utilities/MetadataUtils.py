@@ -1,4 +1,4 @@
-from Scrapping.Filters import add_filters
+from CollectingProducts.Filters import add_filters
 
 import re
 

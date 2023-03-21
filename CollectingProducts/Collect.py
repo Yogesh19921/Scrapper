@@ -1,7 +1,7 @@
 # Import Files
-from Scrapping.Crawl import crawl_item
+from CollectingProducts.Crawl import crawl_item
 from Utilities.Utils import get_page_source
-from Utilities.ServiceBusUtils import send_message
+from CollectingProducts.CollectionServiceBusUtils import send_message
 
 # Import libraries
 from bs4 import BeautifulSoup

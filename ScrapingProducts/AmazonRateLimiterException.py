@@ -1,0 +1,2 @@
+class AmazonRateLimiterException(Exception):
+    pass
