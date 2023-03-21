@@ -1,4 +1,5 @@
 # Import files
+from ScrapingProducts.AmazonRateLimiterException import AmazonRateLimiterException
 from Utilities.Utils import get_page_source
 from Utilities.MetadataUtils import *
 
@@ -8,10 +9,17 @@ import logging as logger
 import time
 
 
-def crawl_item(href):
+AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try again or go to Amazon's home page."
+
+
+def crawl_item(href, retry = 0):
     try:
         curr_url = "https://amazon.com" + href.attrs['href']
         page = get_page_source(curr_url)
+
+        if AMAZON_ERROR in page:
+            raise AmazonRateLimiterException
+
         soup1 = BeautifulSoup(page, "html.parser")
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
         BSR = get_best_sellers_rank(page)
@@ -32,6 +40,11 @@ def crawl_item(href):
         }
 
         return product
+    except AmazonRateLimiterException as a:
+        print("Amazon is probably blocking us. Will sleep for 50 seconds and retry")
+        time.sleep(50)
+        if retry < 3:
+            crawl_item(href, retry + 1)
     except Exception as e:
         logger.error("Error occurred: " + str(e))
         logger.error("URL:" + str(href.attrs['href']))
