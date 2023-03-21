@@ -1,6 +1,7 @@
 from Utilities.Utils import get_page_source
 from Utilities.MetadataUtils import *
-from CollectingProducts.CollectionServiceBusUtils import *
+from CollectingProducts.CollectionServiceBusUtils import get_message
+from Utilities.ServiceBusUtils import send_message
 from Utilities.CosmosUtils import *
 
 # Import libraries

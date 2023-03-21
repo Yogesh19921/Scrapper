@@ -46,7 +46,7 @@ def get_category(soup2):
 
 def get_asin(url):
     ASIN = None
-    pattern = r'/[A-Z][A-Z0-9]{9}/'
+    pattern = r'/[A-Z0-9][A-Z0-9]{9}/'
     matches = re.findall(pattern, url)
 
     if len(matches) > 0:
