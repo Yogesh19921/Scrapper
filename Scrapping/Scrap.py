@@ -7,7 +7,6 @@ from Utilities.ServiceBusUtils import send_message
 from bs4 import BeautifulSoup
 import csv
 from concurrent.futures import ThreadPoolExecutor
-import os
 import json
 import random
 
@@ -80,7 +79,7 @@ def get_product_details(subject_hrefs):
 def program():
     subject_hrefs = get_product_page_hrefs()
     random.shuffle(subject_hrefs)
-    print("Total subject hrefs =============" + str(len(subject_hrefs[:50])))
-    products = get_product_details(subject_hrefs[:50])
+    print("Total subject hrefs =============" + str(len(subject_hrefs)))
+    products = get_product_details(subject_hrefs)
 
     return products

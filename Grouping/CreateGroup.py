@@ -14,17 +14,23 @@ import json
 def create_group():
     it = True
     while it:
-        candidate_urls = get_candidate_urls()
-        # print(candidate_urls[:1])
-        candidates_metadata = get_candidates_metadata(candidate_urls)
+        try:
+            candidate_urls = get_candidate_urls()
+            print("===========================Gotten candidate URLS")
+            # print(candidate_urls[:1])
+            candidates_metadata = get_candidates_metadata(candidate_urls)
 
-        print("============================================")
-        # print(candidates_metadata)
-        print("Scraped URLs:" + str(len(candidates_metadata)))
-        print("Total Urls: " + str(len(candidate_urls)))
-        print("============================================")
+            print("============================================")
+            # print(candidates_metadata)
+            print("Scraped URLs:" + str(len(candidates_metadata)))
+            print("Total Urls: " + str(len(candidate_urls)))
+            print("============================================")
 
-        # it = False
+            # it = False
+        except Exception as e:
+            print(e)
+            print("Some error occurred. Will pause for 50 seconds")
+            time.sleep(50)
 
 
 def get_candidates_metadata(urls):
@@ -46,6 +52,8 @@ def get_candidates_metadata(urls):
 
 def get_candidate_metadata(url):
     try:
+        print("Getting candidate metadata===========")
+        print(url)
         page = get_page_source(url)
         soup1 = BeautifulSoup(page, "html.parser")
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
@@ -71,6 +79,10 @@ def get_candidate_metadata(url):
         time.sleep(5)
         return None
 
+def check_if_exists_in_db(asin):
+    print("Got this asin:" + asin)
+    return validate_item_exists(asin)
+
 
 def get_candidate_urls():
     message = get_message()[0]
@@ -85,15 +97,24 @@ def get_candidate_urls():
 
     candidate_urls = []
     for href in hrefs:
-        candidate_urls.append("https://amazon.com" + href.attrs['href'])
+        # Filter sponsored content
+        if '/gp/slredirect' in href.attrs['href']:
+            continue
+
+
+        print("Getting ASIN from :" + href.attrs['href'])
+        # Check if we have already scraped this item by looking in the database
+        if not check_if_exists_in_db(get_asin(href.attrs['href'])):
+            long_href = href.attrs['href']
+            short_href = long_href.split('ref=')[0]
+            candidate_urls.append("https://amazon.com" + short_href)
 
     if len(hrefs) <= 0:
         print("=============No hrefs found.=====================" + search_url)
         text_file = open(message_json['ASIN'], "w")
         text_file.write(page)
         text_file.close()
-        # print(page)
-        time.sleep(100)
+        raise Exception("No links founds. Amazon probably blocked us")
 
     complete_message(message)
     return candidate_urls

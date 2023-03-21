@@ -21,3 +21,13 @@ def insert_entry(metadata):
     except Exception as e:
         logger.error("Insert failed for object")
         print(metadata)
+
+
+def validate_item_exists(asin):
+    try:
+        item = container.read_item(asin, partition_key=PartitionKey(path=key_path))
+        print("Item is :")
+        return True
+    except Exception as e:
+        print("Item not found with ID:" + str(asin))
+        return False

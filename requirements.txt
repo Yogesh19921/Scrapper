@@ -1,6 +1,7 @@
-beautifulsoup4~=4.11.2
-selenium~=4.8.2
+beautifulsoup4
+selenium
 webdriver-manager
 azure.cosmos
 azure.identity
+azure.servicebus
 amazoncaptcha

@@ -7,28 +7,11 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.by import By
 import random
 from amazoncaptcha import AmazonCaptcha
-import time
 import re
-from threading import Lock
 
-lock = Lock()
 
 PROXY = "socks5://localhost:9050"
 VALIDATE_TEXT = "Sorry, we just need to make sure you're not a robot. For best results, please make sure your browser is accepting cookies."
-
-CAPTCHAS_SOLVED = 0
-CAPTCHAS_SOLVED_LIMIT = 10
-
-
-def limit_captcha_solving():
-    lock.acquire()
-    CAPTCHAS_SOLVED = CAPTCHAS_SOLVED + 1
-    if CAPTCHAS_SOLVED >= CAPTCHAS_SOLVED_LIMIT:
-        print("Too many captchas solved. Time to sleep")
-        time.sleep(30)
-        CAPTCHAS_SOLVED = 0
-
-    lock.release()
 
 
 def solve_captcha(driver):
@@ -71,7 +54,6 @@ def get_page_source(page_url, scroll=False):
     if re.search(VALIDATE_TEXT, content, re.IGNORECASE):
         content = solve_captcha(driver)
         print("Solved captcha for : ============" + str(page_url))
-        limit_captcha_solving()
 
     driver.quit()
     return content
