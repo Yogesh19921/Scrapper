@@ -30,3 +30,7 @@ def get_message(count=1):
 
 def complete_message(message):
     receiver.complete_message(message)
+
+
+def close_connection():
+    servicebus_client.close()

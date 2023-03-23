@@ -7,7 +7,7 @@ if __name__ == "__main__":
     while True:
         processes = []
 
-        for i in range(3):
+        for i in range(1):
             p = Process(target=program, args=(i, ))
             p.start()
             processes.append(p)

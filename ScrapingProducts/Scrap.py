@@ -23,6 +23,7 @@ def run_a_thread(thread_id):
         retrieve_url_scrap_and_insert_into_db()
     except AmazonRateLimiterException as a:
         print("Amazon rate limited us. Will sleep for 20 minutes.")
+        close_connection()
         time.sleep(1200)
     except Exception as e:
         print("Some unknown error.")
