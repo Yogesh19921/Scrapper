@@ -24,7 +24,7 @@ def send_message(body):
 
 
 def get_message(count=1):
-    received_msgs = receiver.receive_messages(max_message_count=count)
+    received_msgs = receiver.receive_messages(max_message_count=count, max_wait_time=5)
     return received_msgs
 
 
