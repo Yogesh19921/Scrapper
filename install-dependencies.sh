@@ -1,5 +1,5 @@
 # install pip
-sudo apt install python3-pip -y
+sudo apt update -y && sudo apt install python3-pip -y
 
 # install edge browser
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -12,3 +12,8 @@ sudo apt update -y && sudo apt install microsoft-edge-stable -y
 #install tor
 sudo apt install tor -y
 sudo service tor start
+
+# install requirements
+cd ~/Scrapper
+pip3 install -r requirements.txt
+pip3 install --upgrade requests

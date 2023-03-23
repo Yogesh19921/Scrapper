@@ -6,7 +6,6 @@ from ScrapingProducts.AmazonRateLimiterException import AmazonRateLimiterExcepti
 
 # Import libraries
 from bs4 import BeautifulSoup
-import concurrent.futures
 import logging as logger
 import time
 import json
@@ -14,22 +13,31 @@ import json
 AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try again or go to Amazon's home page."
 
 
-def program():
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        executor.map(run_a_thread, range(10))
+def program(thread_id):
+    run_a_thread(thread_id)
 
 
 def run_a_thread(thread_id):
     print("starting thread: " + str(thread_id))
-    while True:
-        try:
-            retrieve_url_scrap_and_insert_into_db()
-        except AmazonRateLimiterException as a:
-            print("Amazon rate limited us. Will sleep for 100 seconds")
-            time.sleep(100)
-        except Exception as e:
-            print("Some unknown error.")
-            print(e)
+    try:
+        retrieve_url_scrap_and_insert_into_db()
+    except AmazonRateLimiterException as a:
+        print("Amazon rate limited us. Will sleep for 20 minutes.")
+        time.sleep(1200)
+    except Exception as e:
+        print("Some unknown error.")
+        print(e)
+    # while True:
+    #     try:
+    #         retrieve_url_scrap_and_insert_into_db()
+    #         # Change ip for next request
+    #         os.system('sudo service tor reload')
+    #     except AmazonRateLimiterException as a:
+    #         print("Amazon rate limited us. Will sleep for 20 minutes.")
+    #         time.sleep(1200)
+    #     except Exception as e:
+    #         print("Some unknown error.")
+    #         print(e)
 
 
 def get_candidate_metadata(url):
