@@ -22,8 +22,8 @@ def create_group():
             print("===========================Gotten candidate URLS")
             send_candidate_urls(candidate_urls)
         except AmazonRateLimiterException as a:
-            print("Amazon probably blocked us. Sleeping for 100 seconds.")
-            time.sleep(100)
+            print("Amazon probably blocked us. Sleeping for 1800 seconds.")
+            time.sleep(1800)
         except Exception as e:
             print(e)
             print("Some error occurred.")

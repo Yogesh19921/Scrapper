@@ -46,7 +46,7 @@ def get_product_page_hrefs():
     subject_hrefs = []
     futures = []
 
-    executor = ThreadPoolExecutor()
+    executor = ThreadPoolExecutor(max_workers=1)
 
     for page_url in page_URLs:
         futures.append(executor.submit(fetch_product_urls, page_url))
