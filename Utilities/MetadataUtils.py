@@ -135,7 +135,7 @@ def get_bsr_category(page):
 
 
 def get_product_dimensions(soup2):
-    dimensions = None
+    dimensions = "NA"
     rows = soup2.find_all('tr')
 
     for row in rows:
@@ -149,5 +149,5 @@ def get_product_dimensions(soup2):
             if 'Dimensions' in row.text:
                 dimensions = row.text.strip().split("\n")[-1].strip()
                 break;
-    validate_and_throw_exception(dimensions, "dimensions")
+    #validate_and_throw_exception(dimensions, "dimensions")
     return dimensions
