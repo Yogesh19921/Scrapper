@@ -8,11 +8,10 @@ from bs4 import BeautifulSoup
 import logging as logger
 import time
 
-
 AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try again or go to Amazon's home page."
 
 
-def crawl_item(href, retry = 0):
+def crawl_item(href, retry=0):
     try:
         curr_url = "https://amazon.com" + href.attrs['href']
         page = get_page_source(curr_url)
@@ -41,12 +40,11 @@ def crawl_item(href, retry = 0):
 
         return product
     except AmazonRateLimiterException as a:
-        print("Amazon is probably blocking us. Will sleep for 50 seconds and retry")
-        time.sleep(50)
+        print("Amazon is probably blocking us. Will sleep for 1800 seconds and retry")
+        time.sleep(1800)
         if retry < 3:
             crawl_item(href, retry + 1)
     except Exception as e:
         logger.error("Error occurred: " + str(e))
         logger.error("URL:" + str(href.attrs['href']))
-        time.sleep(5)
         return None

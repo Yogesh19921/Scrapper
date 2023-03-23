@@ -62,7 +62,7 @@ def get_product_details(subject_hrefs):
     products = []
     futures = []
 
-    executor = ThreadPoolExecutor()
+    executor = ThreadPoolExecutor(max_workers=1)
 
     for href in subject_hrefs:
         futures.append(executor.submit(crawl_item, href))
