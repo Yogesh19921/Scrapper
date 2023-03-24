@@ -2,8 +2,8 @@ import sys
 import subprocess
 import os
 
-procs = []
 while True:
+    procs = []
     for i in range(10):
         proc = subprocess.Popen([sys.executable, 'Aragorn.py'])
         procs.append(proc)
