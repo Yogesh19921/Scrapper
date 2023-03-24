@@ -5,7 +5,7 @@ import os
 while True:
     procs = []
     for i in range(10):
-        proc = subprocess.Popen([sys.executable, 'Aragorn.py', i])
+        proc = subprocess.Popen([sys.executable, 'Aragorn.py', str(i)])
         procs.append(proc)
 
     for proc in procs:
