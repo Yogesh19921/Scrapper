@@ -1,19 +1,6 @@
 from ScrapingProducts.Scrap import program
-from multiprocessing import Process
-import os
-
+import sys
 
 if __name__ == "__main__":
-    while True:
-        processes = []
-
-        for i in range(1):
-            p = Process(target=program, args=(i, ))
-            p.start()
-            processes.append(p)
-
-        for p in processes:
-            p.join()
-
-        # Change ip for next request
-        os.system('sudo service tor reload')
+    thread_id = sys.argv[1]
+    program(thread_id)
