@@ -39,6 +39,8 @@ def get_options():
 
 def get_page_source(page_url, scroll=False):
     driver = webdriver.Edge(options=get_options(), service=EdgeService(EdgeChromiumDriverManager().install()))
+    # Wait for a maximum of 60 seconds for page to load
+    driver.set_page_load_timeout(60)
     driver.get(page_url)
     if scroll:
         # randomize scroll amount as well
