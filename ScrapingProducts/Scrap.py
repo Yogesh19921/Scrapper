@@ -81,7 +81,7 @@ def retrieve_url_scrap_and_insert_into_db():
         message_json = json.loads(str(message))
         url = message_json['url']
 
-        if validate_item_exists(get_asin(url)):
+        if not validate_item_exists(get_asin(url)):
             candidate_metadata = get_candidate_metadata(url)
 
             if candidate_metadata is not None:
