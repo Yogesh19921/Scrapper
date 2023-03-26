@@ -25,7 +25,7 @@ def insert_entry(metadata):
 
 def validate_item_exists(asin):
     try:
-        item = container.read_item(asin, partition_key=PartitionKey(path=key_path))
+        item = container.read_item(item=asin, partition_key=asin)
         print("Item is :")
         return True
     except Exception as e:
