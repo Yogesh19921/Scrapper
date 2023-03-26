@@ -15,18 +15,16 @@ AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try a
 
 
 def create_group():
-    it = True
-    while it:
-        try:
-            candidate_urls = get_candidate_urls()
-            print("===========================Gotten candidate URLS")
-            send_candidate_urls(candidate_urls)
-        except AmazonRateLimiterException as a:
-            print("Amazon probably blocked us. Sleeping for 1800 seconds.")
-            time.sleep(1800)
-        except Exception as e:
-            print(e)
-            print("Some error occurred.")
+    try:
+        candidate_urls = get_candidate_urls()
+        print("===========================Gotten candidate URLS")
+        send_candidate_urls(candidate_urls)
+    except AmazonRateLimiterException as a:
+        print("Amazon probably blocked us. Sleeping for 1800 seconds.")
+        time.sleep(1800)
+    except Exception as e:
+        print(e)
+        print("Some error occurred.")
 
 
 def send_candidate_urls(candidate_urls):
