@@ -14,6 +14,38 @@ def get_name(soup2):
     return name
 
 
+def get_top_category(soup2):
+    category = "NA"
+
+    # Try to find category from Amazon tree
+    if soup2.find("ul", {"class", "a-unordered-list a-horizontal a-size-small"}) is not None:
+        category = soup2.find("ul", {"class", "a-unordered-list a-horizontal a-size-small"}).findChildren("li")[
+            -1].text.strip()
+
+    return category
+
+
+def get_bottom_category(soup2):
+    category = "NA"
+    bsr_category = get_bsr_category(soup2)
+
+    # Category tree is not present.
+    if bsr_category is None:
+        if soup2.find("span", {"class", "cat-link"}) is not None:
+            category = soup2.find("span", {"class", "cat-link"}).text.strip()
+
+        if soup2.find("span", {"class": "ac-keyword-link"}) is not None:
+            category = soup2.find("span", {"class": "ac-keyword-link"}).text.strip()
+
+        if soup2.find("span", {"class": "ac-for-text"}) is not None:
+            category = soup2.find("span", {"class": "ac-for-text"}).text.strip()
+    else:
+        category = bsr_category
+
+    #validate_and_throw_exception(category, "category")
+    return category
+
+
 def get_category(soup2):
     category = None
 

@@ -23,12 +23,20 @@ def crawl_item(href, retry=0):
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
         BSR = get_best_sellers_rank(page)
 
-        category = get_category(soup2)
-        bsr_category = category
+        top_category = get_top_category(soup2)
+        #bsr_category = category
+        bottom_category = get_bottom_category(soup2)
+
+        category = ""
+        if top_category != "NA":
+            category = top_category
+        else:
+            category = bottom_category
 
         product = {
             'name': get_name(soup2),
-            'category': category,
+            'topCategory': top_category,
+            'bottomCategory': bottom_category,
             'price': get_price(soup2),
             'ASIN': get_asin(curr_url),
             'reviews': get_reviews(soup2),

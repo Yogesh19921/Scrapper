@@ -52,10 +52,16 @@ def get_candidate_metadata(url):
 
         soup1 = BeautifulSoup(page, "html.parser")
         soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
+
+        top_category = get_top_category(soup2)
+        # bsr_category = category
+        bottom_category = get_bottom_category(soup2)
+
         metadata = {
             'id': get_asin(url),
             'name': get_name(soup2),
-            'category': get_category(soup2),
+            'topCategory': top_category,
+            'bottomCategory': bottom_category,
             'price': get_price(soup2),
             'ASIN': get_asin(url),
             'reviews': get_reviews(soup2),

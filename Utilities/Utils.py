@@ -29,7 +29,7 @@ def solve_captcha(driver):
 def get_options():
     options = EdgeOptions()
     user_agent = random_ua
-    options.add_argument("--proxy-server=%s" % PROXY)
+    #options.add_argument("--proxy-server=%s" % PROXY)
     options.add_argument("--incognito")
     options.add_argument("--headless")
     options.add_argument("--window-size=1920,1080")
