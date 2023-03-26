@@ -162,7 +162,7 @@ def get_bsr_category(page):
     except Exception as e:
         print(f"couldn't find category")
 
-    validate_and_throw_exception(bsr_category, "bsr_category")
+    #validate_and_throw_exception(bsr_category, "bsr_category")
     return bsr_category
 
 
