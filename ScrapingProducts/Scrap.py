@@ -93,6 +93,8 @@ def retrieve_url_scrap_and_insert_into_db():
             if candidate_metadata is not None:
                 insert_entry(candidate_metadata)
                 complete_message(message)
+        else:
+            complete_message(message)
 
     except AmazonRateLimiterException as a:
         raise AmazonRateLimiterException
