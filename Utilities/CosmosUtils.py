@@ -5,7 +5,7 @@ import logging as logger
 
 ENDPOINT = "https://scraping-grouping.documents.azure.com:443/"
 DATABASE_NAME = "Scraping"
-CONTAINER_NAME = "Grouping1"
+CONTAINER_NAME = "Grouping"
 key_path = PartitionKey(path="/ASIN")
 credential = DefaultAzureCredential()
 client = CosmosClient(url=ENDPOINT, credential=credential)
