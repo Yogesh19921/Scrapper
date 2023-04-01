@@ -11,7 +11,7 @@ import time
 AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try again or go to Amazon's home page."
 
 
-def crawl_item(href, retry=0):
+def crawl_item(curr_url, retry=0):
     try:
         curr_url = "https://amazon.com" + href.attrs['href']
         page = get_page_source(curr_url)
