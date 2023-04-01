@@ -5,7 +5,6 @@ from CollectingProducts.CollectionServiceBusUtils import *
 
 # Import libraries
 from bs4 import BeautifulSoup
-from concurrent.futures import ThreadPoolExecutor
 import json
 import random
 
@@ -19,24 +18,6 @@ def fetch_product_urls(page_url):
     return subject_urls
 
 
-def get_product_details(subject_hrefs):
-    products = []
-    futures = []
-
-    executor = ThreadPoolExecutor(max_workers=1)
-
-    for href in subject_hrefs:
-        futures.append(executor.submit(crawl_item, href))
-
-    for future in futures:
-        res = future.result()
-        if res is not None:
-            send_message(json.dumps(res))
-            products.append(res)
-
-    return products
-
-
 def crawl_and_generate_search_url(product_url):
     product_metadata = crawl_item(product_url)
     send_message(json.dumps(product_metadata))
@@ -44,7 +25,7 @@ def crawl_and_generate_search_url(product_url):
     print("====================")
 
 
-def send_url_to_sb(hrefs):
+def send_urls_to_sb(hrefs):
     for href in hrefs:
         url = "https://amazon.com" + href.attrs['href']
         send_message_best_sellers({
@@ -55,7 +36,5 @@ def send_url_to_sb(hrefs):
 def collect_and_send_url_to_sb(url):
     subject_hrefs = fetch_product_urls(url)
     random.shuffle(subject_hrefs)
-    print("Total subject hrefs =============" + str(len(subject_hrefs)))
-    products = get_product_details(subject_hrefs)
-
-    return products
+    print("Total subject hrefs ============= " + str(len(subject_hrefs)))
+    send_urls_to_sb(subject_hrefs)

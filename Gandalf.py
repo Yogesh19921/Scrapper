@@ -6,7 +6,9 @@ if __name__ == "__main__":
     arg = sys.argv[1]
 
     if arg == "collect":
-        collect_and_send_url_to_sb(arg)
+        url = sys.argv[2]
+        collect_and_send_url_to_sb(url)
 
     if arg == "crawl":
-        crawl_and_generate_search_url(arg)
+        url = sys.argv[2]
+        crawl_and_generate_search_url(url)
