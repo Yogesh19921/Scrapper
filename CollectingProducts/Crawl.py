@@ -13,7 +13,6 @@ AMAZON_ERROR = "Sorry! Something went wrong on our end. Please go back and try a
 
 def crawl_item(curr_url, retry=0):
     try:
-        curr_url = "https://amazon.com" + href.attrs['href']
         page = get_page_source(curr_url)
 
         if AMAZON_ERROR in page:
