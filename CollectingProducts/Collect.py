@@ -20,9 +20,10 @@ def fetch_product_urls(page_url):
 
 def crawl_and_generate_search_url(product_url):
     product_metadata = crawl_item(product_url)
-    send_message(json.dumps(product_metadata))
-    print("Sent the product metadata with search URL")
-    print("====================")
+    if product_metadata is not None:
+        send_message(json.dumps(product_metadata))
+        print("Sent the product metadata with search URL")
+        print("====================")
 
 
 def send_urls_to_sb(hrefs):
