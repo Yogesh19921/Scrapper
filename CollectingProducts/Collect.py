@@ -28,9 +28,10 @@ def crawl_and_generate_search_url(product_url):
 def send_urls_to_sb(hrefs):
     for href in hrefs:
         url = "https://amazon.com" + href.attrs['href']
-        send_message_best_sellers({
+        data = {
             'url': url
-        })
+        }
+        send_message_best_sellers(json.dumps(data))
 
 
 def collect_and_send_url_to_sb(url):
