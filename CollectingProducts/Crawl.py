@@ -50,8 +50,8 @@ def crawl_item(curr_url, retry=0):
         print("Amazon is probably blocking us. Will sleep for 1800 seconds and retry")
         time.sleep(1800)
         if retry < 3:
-            crawl_item(href, retry + 1)
+            crawl_item(curr_url, retry + 1)
     except Exception as e:
         logger.error("Error occurred: " + str(e))
-        logger.error("URL:" + str(href.attrs['href']))
+        logger.error("URL:" + str(curr_url))
         return None
